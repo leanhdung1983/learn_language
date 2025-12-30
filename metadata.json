@@ -1,0 +1,7 @@
+{
+  "name": "LinguaFlow AI",
+  "description": "An advanced AI-powered language tutor for English, Japanese, and Chinese, featuring real-time voice interaction and instant feedback on pronunciation and grammar.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
