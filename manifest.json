@@ -1,0 +1,17 @@
+
+{
+  "short_name": "LinguaFlow",
+  "name": "LinguaFlow AI - Học ngoại ngữ thông minh",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/initials/svg?seed=LF&backgroundColor=3b82f6",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "description": "Ứng dụng học giao tiếp ngoại ngữ với AI tutor thực tế."
+}
