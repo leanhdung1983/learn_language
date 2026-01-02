@@ -150,8 +150,8 @@ const App: React.FC = () => {
       const userStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setStream(userStream);
 
-      const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
-      const ai = new GoogleGenAI({ apiKey });
+      // Changed: Use process.env.API_KEY directly as per guidelines
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const config = LANGUAGE_CONFIGS[selectedLanguage];
       
       let systemInstructionText = config.systemInstruction.replace('{topic}', selectedTopic?.title || customGuide.title);
@@ -164,7 +164,8 @@ const App: React.FC = () => {
         config: {
           responseModalities: [Modality.AUDIO],
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: config.voice as any } } },
-          systemInstruction: { parts: [{ text: systemInstructionText }] },
+          // Changed: systemInstruction should be a string, not an object
+          systemInstruction: systemInstructionText,
           outputAudioTranscription: {},
           inputAudioTranscription: {},
         },
