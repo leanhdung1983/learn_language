@@ -75,12 +75,13 @@ const LearningGuide: React.FC<LearningGuideProps> = ({ guide, language, onWordMa
   const analyzePronunciation = async (wordText: string, audioBlob: Blob) => {
     setIsAnalyzing(wordText);
     try {
-      const apiKey = process.env.API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
-      const ai = new GoogleGenAI({ apiKey });
+      // Correctly access API key from process.env as per Vite config and guidelines
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const base64Audio = await blobToBase64(audioBlob);
 
+      // Use a valid multimodal model for audio analysis. 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         contents: [{
           role: 'user',
           parts: [
@@ -91,7 +92,7 @@ const LearningGuide: React.FC<LearningGuideProps> = ({ guide, language, onWordMa
         config: { responseMimeType: 'application/json' }
       });
 
-      const result = JSON.parse(response.text) as PronunciationResult;
+      const result = JSON.parse(response.text!) as PronunciationResult;
       setResults(prev => ({ ...prev, [wordText]: result }));
 
       // Auto-save if score is good
@@ -100,7 +101,11 @@ const LearningGuide: React.FC<LearningGuideProps> = ({ guide, language, onWordMa
         if (vocabItem) onWordMastered(vocabItem, result.score);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Analysis failed:", error);
+      setResults(prev => ({ 
+        ...prev, 
+        [wordText]: { score: 0, feedback: "Error analyzing audio. Please try again." } 
+      }));
     } finally {
       setIsAnalyzing(null);
     }

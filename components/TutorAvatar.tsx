@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface TutorAvatarProps {
   url: string;
@@ -7,49 +7,81 @@ interface TutorAvatarProps {
   isTalking: boolean;
 }
 
-const TutorAvatar: React.FC<TutorAvatarProps> = ({ url, name, isTalking }) => {
+export default function TutorAvatar({ url, name, isTalking }: TutorAvatarProps) {
+  const [imgSrc, setImgSrc] = useState(url);
+
+  useEffect(() => {
+    setImgSrc(url);
+  }, [url]);
+
+  const handleImgError = () => {
+    // Fallback to a high-quality robot avatar generator if the main image fails
+    setImgSrc(`https://api.dicebear.com/7.x/bottts/svg?seed=${name}&backgroundColor=transparent`);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center p-6 transition-all duration-500">
-      <div className={`relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-8 transition-all duration-300 ${
-        isTalking ? 'border-blue-400 scale-105 shadow-[0_0_50px_rgba(59,130,246,0.5)]' : 'border-white shadow-xl'
+    <div className="flex flex-col items-center justify-center p-6 transition-all duration-500 perspective-container">
+      <div 
+        className={`relative w-48 h-48 md:w-60 md:h-60 rounded-full transition-all duration-300 avatar-3d group ${
+        isTalking ? 'scale-110' : 'hover:scale-105'
       }`}>
-        <img 
-          src={url} 
-          alt={name} 
-          className={`w-full h-full object-cover transition-transform duration-300 ${isTalking ? 'animate-bounce' : ''}`}
-          style={{ animationDuration: '2s' }}
-        />
+        {/* Glow behind the avatar */}
+        <div className={`absolute -inset-4 rounded-full bg-blue-500/20 blur-xl transition-all duration-500 ${isTalking ? 'bg-blue-500/40 scale-110' : ''}`}></div>
+        
+        {/* The Avatar Image */}
+        <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white/50 ring-2 ring-blue-400/30 shadow-2xl z-10 bg-gray-900">
+            <img 
+              src={imgSrc} 
+              alt={name} 
+              onError={handleImgError}
+              className={`w-full h-full object-cover transition-transform duration-700 ${isTalking ? 'scale-110' : 'scale-100 group-hover:scale-110'}`}
+            />
+            {/* Subtle reflection shine */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none"></div>
+        </div>
+        
+        {/* Active Talking Rings */}
         {isTalking && (
-          <div className="absolute inset-0 bg-blue-400/10 animate-pulse"></div>
+          <>
+            <div className="absolute -inset-1 border border-blue-400/60 rounded-full animate-ping-slow z-0"></div>
+            <div className="absolute -inset-8 border border-blue-400/20 rounded-full animate-ping-slower z-0"></div>
+          </>
         )}
       </div>
-      <div className="mt-4 text-center">
-        <h3 className="text-xl font-bold text-gray-800">{name}</h3>
-        <p className="text-sm font-medium text-blue-600 uppercase tracking-widest flex items-center gap-2">
+
+      <div className="mt-8 text-center relative z-20">
+        <div className="absolute -inset-4 bg-white/60 blur-xl rounded-full -z-10"></div>
+        <h3 className="text-xl font-black text-gray-800 tracking-tight drop-shadow-sm">{name}</h3>
+        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center justify-center gap-2 mt-1">
           {isTalking ? (
             <>
-              <span className="flex gap-1">
-                <span className="w-1 h-3 bg-blue-600 animate-grow-1"></span>
-                <span className="w-1 h-5 bg-blue-600 animate-grow-2"></span>
-                <span className="w-1 h-3 bg-blue-600 animate-grow-3"></span>
+              <span className="flex gap-1 items-end h-4">
+                <span className="w-1 h-2 bg-blue-600 animate-music-1 rounded-full"></span>
+                <span className="w-1 h-4 bg-blue-600 animate-music-2 rounded-full"></span>
+                <span className="w-1 h-3 bg-blue-600 animate-music-3 rounded-full"></span>
               </span>
-              Speaking...
+              Speaking
             </>
-          ) : 'Listening...'}
+          ) : 'Ready'}
         </p>
       </div>
       
       <style>{`
-        @keyframes grow {
-          0%, 100% { transform: scaleY(0.5); }
-          50% { transform: scaleY(1); }
+        .perspective-container {
+          perspective: 1000px;
         }
-        .animate-grow-1 { animation: grow 0.8s ease-in-out infinite; }
-        .animate-grow-2 { animation: grow 0.8s ease-in-out infinite 0.2s; }
-        .animate-grow-3 { animation: grow 0.8s ease-in-out infinite 0.4s; }
+        .avatar-3d {
+          transform-style: preserve-3d;
+          box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes music { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+        .animate-music-1 { animation: music 0.5s ease-in-out infinite; }
+        .animate-music-2 { animation: music 0.5s ease-in-out infinite 0.1s; }
+        .animate-music-3 { animation: music 0.5s ease-in-out infinite 0.2s; }
+        .animate-ping-slow { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        .animate-ping-slower { animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
       `}</style>
     </div>
   );
-};
-
-export default TutorAvatar;
+}

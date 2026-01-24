@@ -1,17 +1,34 @@
 
 {
+  "name": "LinguaFlow AI",
   "short_name": "LinguaFlow",
-  "name": "LinguaFlow AI - Học ngoại ngữ thông minh",
+  "description": "Học giao tiếp ngoại ngữ Anh, Nhật, Trung với AI Tutor.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
   "icons": [
     {
       "src": "https://api.dicebear.com/7.x/initials/svg?seed=LF&backgroundColor=3b82f6",
       "type": "image/svg+xml",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/initials/png?seed=LF&backgroundColor=3b82f6&size=192",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/initials/png?seed=LF&backgroundColor=3b82f6&size=512",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#3b82f6",
-  "background_color": "#ffffff",
-  "description": "Ứng dụng học giao tiếp ngoại ngữ với AI tutor thực tế."
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }

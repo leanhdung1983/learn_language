@@ -24,18 +24,21 @@ export interface VoiceConfig {
 
 export interface VocabularyItem {
   word: string;
-  reading: string; // IPA for English, Romaji for JP, Pinyin for CN
+  reading: string;
   meaning: string;
 }
 
-export interface LearnedWord extends VocabularyItem {
+export interface LessonGuide {
+  tips: string;
+  vocabulary: VocabularyItem[];
+  starters: string[];
+}
+
+export interface LearnedWord {
+  word: string;
+  reading: string;
+  meaning: string;
   language: Language;
   dateAdded: number;
   lastScore: number;
-}
-
-export interface LessonGuide {
-  vocabulary: VocabularyItem[];
-  starters: string[]; // Conversation starter sentences
-  tips: string;
 }

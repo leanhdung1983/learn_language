@@ -8,17 +8,15 @@ interface VisualizerProps {
 
 const Visualizer: React.FC<VisualizerProps> = ({ isActive, stream }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Fix: Added initial value null to useRef to resolve 'Expected 1 arguments' error
   const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isActive || !stream || !canvasRef.current) return;
 
-    // Fix: Added AudioContextOptions to constructor to resolve 'Expected 1 arguments' error
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
     const source = audioContext.createMediaStreamSource(stream);
     const analyzer = audioContext.createAnalyser();
-    analyzer.fftSize = 256;
+    analyzer.fftSize = 64; // Smaller for cleaner mobile look
     source.connect(analyzer);
 
     const bufferLength = analyzer.frequencyBinCount;
@@ -32,17 +30,20 @@ const Visualizer: React.FC<VisualizerProps> = ({ isActive, stream }) => {
       analyzer.getByteFrequencyData(dataArray);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / bufferLength) * 2.5;
-      let barHeight;
+      const barWidth = (canvas.width / bufferLength) * 2;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        barHeight = (dataArray[i] / 255) * canvas.height;
-        const blue = 150 + (barHeight * 2);
-        const green = 50 + (barHeight * 1);
-        ctx.fillStyle = `rgb(59, 130, 246)`;
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-        x += barWidth + 1;
+        const barHeight = (dataArray[i] / 255) * canvas.height;
+        ctx.fillStyle = isActive ? '#3b82f6' : '#cbd5e1';
+        
+        // Draw rounded bars
+        const radius = 2;
+        ctx.beginPath();
+        ctx.roundRect(x, (canvas.height - barHeight) / 2, barWidth - 2, barHeight, radius);
+        ctx.fill();
+        
+        x += barWidth;
       }
     };
 
@@ -57,9 +58,9 @@ const Visualizer: React.FC<VisualizerProps> = ({ isActive, stream }) => {
   return (
     <canvas 
       ref={canvasRef} 
-      className="w-full h-24 rounded-lg bg-gray-100"
-      width={400} 
-      height={100}
+      className="w-full h-8"
+      width={200} 
+      height={40}
     />
   );
 };
